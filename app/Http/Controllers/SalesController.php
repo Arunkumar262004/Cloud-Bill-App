@@ -17,7 +17,7 @@ class SalesController extends Controller
             'product_qty' => $request->product_qty,
             'price' => $request->price
         ]);
-       $get_product_qty =   Stock::where('product_name', $request->product_name)->first();
+        $get_product_qty =   Stock::where('product_name', $request->product_name)->first();
         $get_product_qty->update([
             'stock_qty' => ($get_product_qty->stock_qty - $request->product_qty),
         ]);
@@ -47,23 +47,51 @@ class SalesController extends Controller
 
     public function Sales_update(Request $request, $id)
     {
-        $id = Sales::find($id);
-        $id->update([
-            'product_name' => $request->product_name,
-            'product_code' => $request->product_code,
-            'customer_name' => $request->customer_name,
-            'product_qty' => $request->product_qty,
-            'price' => $request->price
+        $sale = Sales::find($id);
 
-        ]);
-        return response()->json([
-            'status' => 'success'
-        ]);
+        if ($sale) {
+            $stock = Stock::where('product_name', $sale->product_name)->first();
+            $total_stock = $sale->product_qty + $stock->stock;
+
+            if ($stock) {
+                $stock->update([
+                    'stock_qty' => $stock->stock_qty - $total_stock
+                ]);
+
+
+                $sale->update([
+                    'product_name' => $request->product_name,
+                    'product_code' => $request->product_code,
+                    'customer_name' => $request->customer_name,
+                    'product_qty' => $request->product_qty,
+                    'price' => $request->price
+
+                ]);
+
+                return response()->json([
+                    'status' => 'success'
+                ]);
+            }
+        }else{
+             return response()->json([
+                'status' => 'failed'
+            ]);
+        }
     }
 
     public function Sales_delete($id)
     {
-        $id = Sales::find($id);
-        $id->delete();
+        $sale = Sales::find($id);
+
+        if ($sale) {
+            $stock = Stock::where('product_name', $sale->product_name)->first();
+
+            if ($stock) {
+                $stock->update([
+                    'stock_qty' => $stock->stock_qty + $sale->product_qty,
+                ]);
+            }
+            $sale->delete();
+        }
     }
 }

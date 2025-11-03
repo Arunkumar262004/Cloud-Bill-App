@@ -28,6 +28,7 @@ class App extends Component {
                     <Route element={<Dashboard base_url={base_url}/>}>
                         <Route path="/create" element={< Create_model />} />
                         <Route path='/Bill' element={<Bill_My />} />
+                        <Route path='/dashboard' element={<Index_page />} />
                         <Route path='/sales-my' element={<Sales_my base_url={base_url} />} />
                         <Route path='/sales-add' element={< Sales_add_form base_url={base_url} />} />
                         <Route path='/sales-edit/:id' element={< Sales_editform base_url={base_url} />} />

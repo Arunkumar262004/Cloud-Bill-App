@@ -51,7 +51,7 @@ const CompactSidebar = ({ base_url }) => {
           className="bg-dark text-white d-flex flex-column align-items-center py-3"
           style={{ width: "40px" }}
         >
-          <a href="/" className="text-white mb-3 fs-5">
+          <a href="/dashboard" className="text-white mb-3 fs-5">
             <i className="bi bi-pie-chart-fill"></i>
           </a>
           <a href="/Bill" className="text-white mb-3 fs-5">
