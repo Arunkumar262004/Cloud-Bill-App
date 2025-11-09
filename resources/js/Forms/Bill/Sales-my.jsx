@@ -33,6 +33,8 @@ const Sales_my = ({ base_url }) => {
 
 
     }, [base_url, location.state])
+
+    
     const downloadPDF = (id) => {
         window.open(`${base_url}/download-pdf/${id}`, "_blank"); // opens PDF for download
     };

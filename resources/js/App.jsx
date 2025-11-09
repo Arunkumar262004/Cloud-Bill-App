@@ -18,6 +18,8 @@ import Stock_my from './Forms/Bill/Stock-my';
 import Stock_add_form from './Forms/Bill/Stock-add';
 import Stock_editform from './Forms/Bill/Stock.edit';
 import Login from './Forms/Login';
+import Login_with_otp from './Forms/Login-with-otp';
+import Confirm_otp from './Forms/Cofirm_Otp';
 
 var base_url = "http://127.0.0.1:8000";
 class App extends Component {
@@ -25,7 +27,7 @@ class App extends Component {
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route element={<Dashboard base_url={base_url}/>}>
+                    <Route element={<Dashboard base_url={base_url} />}>
                         <Route path="/create" element={< Create_model />} />
                         <Route path='/Bill' element={<Bill_My />} />
                         <Route path='/dashboard' element={<Index_page />} />
@@ -38,7 +40,9 @@ class App extends Component {
                         <Route path="*" element={<NotFound />} />
 
                     </Route>
-                        <Route path="/" element={<Login />} />
+                    <Route path="/" element={<Login />} />
+                    <Route path='/Login-with-otp' element={<Login_with_otp base_url={base_url} />} />
+                    <Route path='/Confirm-otp' element={<Confirm_otp base_url={base_url} />} />
 
                 </Routes>
             </BrowserRouter>
