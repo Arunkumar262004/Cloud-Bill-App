@@ -18,16 +18,22 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 
 
+// ✅ LOGOUT
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-Route::get('/login', [AuthenticatedSessionController::class, 'edit'])->name('profile.edit');
+    return response()->json(['status' => 'logged_out']);
+})->withoutMiddleware(['auth']);
+
+
+Route::get('/login', [AuthenticatedSessionController::class, 'edit']);
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-
-});
+    Route::get('/profile', [ProfileController::class, 'edit']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
+    Route::delete('/profile', [ProfileController::class, 'destroy']);
 
     Route::post('/sales-create', [SalesController::class, 'Store_sales']);
     Route::get('/sales-get', [SalesController::class, 'Sales_my']);
@@ -42,12 +48,18 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/stock-delete/{id}', [Stock_controller::class, 'Stock_delete']);
 
     Route::get('/download-pdf/{id}', [PdfController::class, 'downloadPDF']);
-Route::post('/send-otp',[otp_login_page::class,'generate_otp'])->name('otp.send');
-Route::post('/confirm-otp',[otp_login_page::class,'confirm_otp'])->name('otp.send');
+
+    // Your React entry
+    Route::get('/{any}', function () {
+        return view('app'); // or 'welcome'
+    })->where('any', '.*');
+});
 
 
+Route::post('/send-otp', [otp_login_page::class, 'generate_otp'])->middleware('guest');
+Route::post('/confirm-otp', [otp_login_page::class, 'confirm_otp']);
 
-
+// ✅ LOGIN
 Route::post('/login-check', function (Request $request) {
     $request->validate([
         'email' => 'required|email',
@@ -57,31 +69,19 @@ Route::post('/login-check', function (Request $request) {
     $user = User::where('email', $request->email)->first();
 
     if (!$user) {
-        return response()->json(['status' => 'error', 'message' => 'User not registered']);
+        return response()->json(['status' => 'error', 'message' => 'User not registered'], 401);
     }
 
     if (!Hash::check($request->password, $user->password)) {
-        return response()->json(['status' => 'error', 'message' => 'Invalid password']);
+        return response()->json(['status' => 'error', 'message' => 'Invalid password'], 401);
     }
 
     Auth::login($user);
     $request->session()->regenerate();
 
-    return response()->json(['status' => 'success']);
+    return response()->json(['status' => 'success', 'message' => 'Login successful']);
 });
 
-// Logout API
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
 
-    return response()->json(['status' => 'logged_out']);
-});
 
 require __DIR__ . '/auth.php';
-
-// Your React entry
-Route::get('/{any}', function () {
-    return view('app'); // or 'welcome'
-})->where('any', '.*');

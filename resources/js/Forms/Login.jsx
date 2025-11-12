@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -56,6 +57,7 @@ const Login = () => {
                   <button className="btn btn-primary" type="submit">
                     Login
                   </button>
+                  <Link to="/Login-with-otp" className="btn btn-primary mt-2">Login With OTP</Link>
                 </div>
               </form>
             </div>

@@ -6,13 +6,8 @@ import { toast, ToastContainer } from "react-toastify";
 
 const Login_with_otp = ({ base_url }) => {
 
-const styled_css = {
-  body: {
-    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-   
-  }
-}
-const location = useLocation();
+
+  const location = useLocation();
   const navigate = useNavigate();
   const [input, setIput] = useState({
     email: ''
@@ -29,9 +24,9 @@ const location = useLocation();
 
     axios.post(base_url + '/send-otp', email_value).then((res) => {
       if (res.data.status == "success") {
-        navigate('/Confirm-otp', { state: { message: "OTP Send Your Registered E-Mail Successfully" , type:"true" } })
+        navigate('/Confirm-otp', { state: { message: "OTP Send Your Registered E-Mail Successfully", type: "true" } })
       } else {
-        navigate('/Login-with-otp', { state: { message: "EMail Not Registered" } })
+        navigate('/Login-with-otp', { state: { message: "E-Mail Not Registered" } })
       }
     });
   }
@@ -41,50 +36,68 @@ const location = useLocation();
   }
 
 
-  useEffect(()=>{
-      if (!location.state) return; // 👈 safely exit if null
+  useEffect(() => {
+    if (!location.state) return; // 👈 safely exit if null
 
-    if(location.state?.type === "otp_failed"){
+    if (location.state?.type === "otp_failed") {
       toast.success(location.state.message);
-    }else{
+    } else {
       toast.error(location.state.message)
     }
-  },[location.state])
+  }, [location.state])
 
+  const otp_login_css = {
+    marginTop: "-25px",
+    cursor: "pointer"
+  }
+
+  function navigate_login_page() {
+    navigate('/')
+  }
   return (
-    <div className="otp-wrapper" style={styled_css}>
-      <div className="otp-card">
-        <h3>OTP Verification</h3>
-        <p>Enter your registered email to receive a one-time password.</p>
 
-        <form method="POST" onSubmit={onsubmithandler}>
-          <div className="otp-form-group text-start">
-            <label htmlFor="email" className="otp-label fw-semibold">
-              Email address
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              className="otp-input"
-              placeholder="Enter your email"
-              onChange={onchangehandler}
-              required
-            />
-          </div>
+    <div className="otp_main_card">
+      <div className="otp-wrapper">
+        <div className="otp-card">
+          <div className="row">
+            <div className="col-md-11"></div>
+            <div className="col-md-1">
+              <h4 className="text-danger float-right" style={otp_login_css} onClick={navigate_login_page}>X</h4>
 
-          <button type="submit" className="otp-btn mt-3">
-            Send OTP
-          </button>
-        </form>
-      </div>
-       <div>
-                <ToastContainer
-                    pauseOnHover
-                    autoClose={3000}
-                    position="top-right"
-                />
             </div>
+          </div>
+          <h3>OTP Verification</h3>
+          <p>Enter your registered email to receive a one-time password.</p>
+
+          <form method="POST" onSubmit={onsubmithandler}>
+            <div className="otp-form-group text-start">
+              <label htmlFor="email" className="otp-label fw-semibold">
+                Email address
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                className="otp-input"
+                placeholder="Enter your email"
+                onChange={onchangehandler}
+                required
+              />
+            </div>
+
+            <button type="submit" className="otp-btn mt-3">
+              Send OTP
+            </button>
+          </form>
+        </div>
+        <div>
+          <ToastContainer
+            pauseOnHover
+            autoClose={3000}
+            position="top-right"
+          />
+        </div>
+      </div>
     </div>
   );
 };
