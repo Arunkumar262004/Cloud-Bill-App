@@ -54,9 +54,15 @@ class SalesController extends Controller
             $total_stock = $sale->product_qty + $stock->stock;
 
             if ($stock) {
-                $stock->update([
-                    'stock_qty' => $stock->stock_qty - $total_stock
-                ]);
+                // Return the old sale quantity to stock
+                $stock->stock_qty += $sale->product_qty;
+
+                // Subtract the new sale quantity
+                $stock->stock_qty -= $request->product_qty;
+
+                // Update stock
+                $stock->save();
+
 
 
                 $sale->update([
@@ -72,8 +78,8 @@ class SalesController extends Controller
                     'status' => 'success'
                 ]);
             }
-        }else{
-             return response()->json([
+        } else {
+            return response()->json([
                 'status' => 'failed'
             ]);
         }
